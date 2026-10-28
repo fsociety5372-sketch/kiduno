@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kiduno | Download</title>
+    <title>kiduno | Secure Download</title>
+    
+    <!-- Это делает сайт приложением (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ff00">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+
     <style>
         /* Сброс стилей */
         * {
@@ -12,11 +22,10 @@
             box-sizing: border-box;
         }
 
-        /* Черный фон и зеленый текст */
         body {
-            background-color: #050505; /* Глубокий черный */
-            color: #00ff00; /* Неоновый зеленый */
-            font-family: 'Courier New', Courier, monospace; /* Хакерский шрифт */
+            background-color: #050505;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -24,66 +33,97 @@
             height: 100vh;
             text-align: center;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Эффект свечения для заголовка */
+        /* Легкий эффект матрицы на фоне */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,255,0,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+        }
+
         h1 {
-            font-size: 50px;
+            font-size: 55px;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
+            letter-spacing: 5px;
+            margin-bottom: 5px;
             text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-            animation: glow 2s ease-in-out infinite alternate;
+            animation: glow 1.5s ease-in-out infinite alternate;
         }
 
         @keyframes glow {
             from { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
-            to { text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00; }
+            to { text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00; }
         }
 
         p {
-            color: #008800; /* Темно-зеленый для подписи */
-            margin-bottom: 40px;
+            color: #00aa00;
+            margin-bottom: 50px;
             font-size: 16px;
+            letter-spacing: 2px;
         }
 
-        /* Стильная кнопка скачивания */
+        /* Кнопка скачивания */
         .download-btn {
             display: inline-block;
-            padding: 15px 40px;
-            font-size: 20px;
+            padding: 18px 50px;
+            font-size: 22px;
             font-family: inherit;
             font-weight: bold;
-            color: #00ff00;
-            background-color: transparent;
-            border: 2px solid #00ff00;
+            color: #000000;
+            background-color: #00ff00;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
             text-transform: uppercase;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            position: relative;
         }
 
-        /* Эффект при наведении и нажатии */
         .download-btn:hover {
-            background-color: #00ff00;
-            color: #000000;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            background-color: #00cc00;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.8);
         }
 
         .download-btn:active {
             transform: scale(0.95);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #00ff00;
+            min-height: 20px;
         }
     </style>
 </head>
 <body>
 
     <h1>kiduno</h1>
-    <p>Secure connection established.</p>
+    <p>// Secure connection established //</p>
 
-    <!-- Кнопка скачивания. В href укажи имя файла, который загрузишь на GitHub -->
-    <a href="app.apk" download class="download-btn">Скачать</a>
+    <!-- Кнопка скачивания -->
+    <a href="app.apk" download id="downloadLink" class="download-btn">Скачать</a>
 
+    <div id="status"></div>
+
+    <script>
+        // Скрипт для смены текста при нажатии
+        document.getElementById('downloadLink').addEventListener('click', function() {
+            let statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = "> Инициализация загрузки...";
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = "> Загрузка начата. Проверьте уведомления.";
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
