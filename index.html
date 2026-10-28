@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wi-Fi Сканер | MR.CHAT</title>
+    <title>Сканер Wi-Fi | MR.CHAT</title>
+    <!-- Скрипт для интеграции с Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            background-color: #17212b;
+            background-color: #17212b; /* Темный фон Телеграма */
             color: white;
             font-family: 'Segoe UI', sans-serif;
             text-align: center;
@@ -41,50 +42,95 @@
             transition: 0.2s;
         }
         .btn:active { background-color: #1e8cc2; transform: scale(0.98); }
-        #result {
-            margin-top: 20px;
-            text-align: left;
-            font-family: monospace;
-            color: #00ffcc;
-            white-space: pre-wrap;
-            font-size: 16px;
-            line-height: 1.5;
-            display: none;
-        }
-        .loading {
+        
+        #loading {
             color: #ffcc00;
             font-weight: bold;
             display: none;
             margin-top: 15px;
         }
+        #resultCard {
+            display: none; 
+            text-align: left;
+        }
+        .device-item {
+            background: #17212b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            border-left: 4px solid #2AABEE;
+        }
+        .error-text { color: #ff5555; font-weight: bold; }
     </style>
 </head>
 <body>
+
     <h1>📡 Сканер Сети</h1>
+    
     <div class="card">
-        <p>Нажми кнопку, чтобы запустить бота, который найдет все устройства в твоем Wi-Fi.</p>
+        <p>Нажми кнопку, чтобы узнать, кто подключен к твоему Wi-Fi.</p>
         <button class="btn" onclick="scan()">Сканировать</button>
-        <div class="loading" id="loading">⏳ Сканирую... Подожди 10 секунд.</div>
+        <div id="loading">⏳ Сканирую... Подожди 10 секунд.</div>
     </div>
-    <div class="card" id="resultCard" style="display: none;">
+
+    <div class="card" id="resultCard">
         <h3 style="margin-top: 0; color: white;">Результаты:</h3>
         <div id="result"></div>
     </div>
+
     <script>
-        function scan() {
+        // =========================================================
+        // ⚠️ СЮДА ВСТАВЬ СВОЮ ССЫЛКУ ОТ CLOUDFLARE (без /scan на конце!)
+        // =========================================================
+        const TUNNEL_URL = "ВСТАВЬ_ССЫЛКУ_ИЗ_ТЕРМУКСА"; 
+        // =========================================================
+
+        async function scan() {
+            // Показываем загрузку
             document.getElementById('loading').style.display = 'block';
             document.getElementById('resultCard').style.display = 'none';
-            setTimeout(() => {
+            
+            try {
+                // Стучимся к нашему Python-серверу в Termux
+                const response = await fetch(TUNNEL_URL + '/scan');
+                
+                if (!response.ok) {
+                    throw new Error("Сервер не отвечает");
+                }
+
+                const data = await response.json();
+                
+                // Прячем загрузку, показываем результат
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('resultCard').style.display = 'block';
-                document.getElementById('result').innerHTML = 
-                    "Твой IP: 192.168.0.5<br><br>" +
-                    "Найдено устройств: 3<br>" +
-                    "1. 192.168.0.1 (Роутер)<br>" +
-                    "2. 192.168.0.5 (Твой телефон)<br>" +
-                    "3. 192.168.0.15 (Ноутбук)<br><br>" +
-                    "<span style='color:#ff5555'>*Это тестовая версия. Для реального сканирования нужен Python*</span>";
-            }, 2000);
+                
+                let html = `<p>Твой IP: <b>${data.my_ip}</b></p>`;
+                html += `<p>Найдено устройств: <b>${data.devices.length}</b></p>`;
+                
+                if (data.devices.length === 0) {
+                    html += "<p style='color:#ffcc00'>В сети пока никого нет, кроме тебя.</p>";
+                } else {
+                    data.devices.forEach(dev => {
+                        html += `<div class="device-item">
+                            <b>IP:</b> ${dev.ip}<br>
+                            <b>MAC:</b> ${dev.mac}
+                        </div>`;
+                    });
+                }
+                
+                document.getElementById('result').innerHTML = html;
+
+            } catch (error) {
+                // Если ошибка (например, Termux закрылся)
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('resultCard').style.display = 'block';
+                document.getElementById('result').innerHTML = `
+                    <p class="error-text">Ошибка связи с сервером.</p>
+                    <p>Проверь, что Termux открыт, сервер запущен, и ссылка вставлена правильно.</p>
+                `;
+            }
         }
     </script>
 </body>
