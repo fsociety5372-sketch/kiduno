@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wi-Fi Сканер | MR.CHAT</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #17212b;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { color: #2AABEE; margin-top: 20px; }
+        .card {
+            background-color: #232e3c;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #2AABEE;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn:active { background-color: #1e8cc2; transform: scale(0.98); }
+        #result {
+            margin-top: 20px;
+            text-align: left;
+            font-family: monospace;
+            color: #00ffcc;
+            white-space: pre-wrap;
+            font-size: 16px;
+            line-height: 1.5;
+            display: none;
+        }
+        .loading {
+            color: #ffcc00;
+            font-weight: bold;
+            display: none;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📡 Сканер Сети</h1>
+    <div class="card">
+        <p>Нажми кнопку, чтобы запустить бота, который найдет все устройства в твоем Wi-Fi.</p>
+        <button class="btn" onclick="scan()">Сканировать</button>
+        <div class="loading" id="loading">⏳ Сканирую... Подожди 10 секунд.</div>
+    </div>
+    <div class="card" id="resultCard" style="display: none;">
+        <h3 style="margin-top: 0; color: white;">Результаты:</h3>
+        <div id="result"></div>
+    </div>
+    <script>
+        function scan() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultCard').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('resultCard').style.display = 'block';
+                document.getElementById('result').innerHTML = 
+                    "Твой IP: 192.168.0.5<br><br>" +
+                    "Найдено устройств: 3<br>" +
+                    "1. 192.168.0.1 (Роутер)<br>" +
+                    "2. 192.168.0.5 (Твой телефон)<br>" +
+                    "3. 192.168.0.15 (Ноутбук)<br><br>" +
+                    "<span style='color:#ff5555'>*Это тестовая версия. Для реального сканирования нужен Python*</span>";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
