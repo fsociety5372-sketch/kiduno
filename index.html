@@ -3,135 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сканер Wi-Fi | MR.CHAT</title>
-    <!-- Скрипт для интеграции с Telegram -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>kiduno | Download</title>
     <style>
-        body {
-            background-color: #17212b; /* Темный фон Телеграма */
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            text-align: center;
-            padding: 20px;
+        /* Сброс стилей */
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Черный фон и зеленый текст */
+        body {
+            background-color: #050505; /* Глубокий черный */
+            color: #00ff00; /* Неоновый зеленый */
+            font-family: 'Courier New', Courier, monospace; /* Хакерский шрифт */
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
         }
-        h1 { color: #2AABEE; margin-top: 20px; }
-        .card {
-            background-color: #232e3c;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            box-sizing: border-box;
-        }
-        .btn {
-            background-color: #2AABEE;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn:active { background-color: #1e8cc2; transform: scale(0.98); }
-        
-        #loading {
-            color: #ffcc00;
-            font-weight: bold;
-            display: none;
-            margin-top: 15px;
-        }
-        #resultCard {
-            display: none; 
-            text-align: left;
-        }
-        .device-item {
-            background: #17212b;
-            padding: 10px;
-            border-radius: 8px;
+
+        /* Эффект свечения для заголовка */
+        h1 {
+            font-size: 50px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
             margin-bottom: 10px;
-            font-family: monospace;
-            font-size: 14px;
-            border-left: 4px solid #2AABEE;
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+            animation: glow 2s ease-in-out infinite alternate;
         }
-        .error-text { color: #ff5555; font-weight: bold; }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; }
+            to { text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00; }
+        }
+
+        p {
+            color: #008800; /* Темно-зеленый для подписи */
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        /* Стильная кнопка скачивания */
+        .download-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-family: inherit;
+            font-weight: bold;
+            color: #00ff00;
+            background-color: transparent;
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        /* Эффект при наведении и нажатии */
+        .download-btn:hover {
+            background-color: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+        }
+
+        .download-btn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
 
-    <h1>📡 Сканер Сети</h1>
-    
-    <div class="card">
-        <p>Нажми кнопку, чтобы узнать, кто подключен к твоему Wi-Fi.</p>
-        <button class="btn" onclick="scan()">Сканировать</button>
-        <div id="loading">⏳ Сканирую... Подожди 10 секунд.</div>
-    </div>
+    <h1>kiduno</h1>
+    <p>Secure connection established.</p>
 
-    <div class="card" id="resultCard">
-        <h3 style="margin-top: 0; color: white;">Результаты:</h3>
-        <div id="result"></div>
-    </div>
+    <!-- Кнопка скачивания. В href укажи имя файла, который загрузишь на GitHub -->
+    <a href="app.apk" download class="download-btn">Скачать</a>
 
-    <script>
-        // =========================================================
-        // ⚠️ СЮДА ВСТАВЬ СВОЮ ССЫЛКУ ОТ CLOUDFLARE (без /scan на конце!)
-        // =========================================================
-        const TUNNEL_URL = "https://sie-deaf-days-describe.trycloudflare.com"; 
-        // =========================================================
-
-        async function scan() {
-            // Показываем загрузку
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('resultCard').style.display = 'none';
-            
-            try {
-                // Стучимся к нашему Python-серверу в Termux
-                const response = await fetch(TUNNEL_URL + '/scan');
-                
-                if (!response.ok) {
-                    throw new Error("Сервер не отвечает");
-                }
-
-                const data = await response.json();
-                
-                // Прячем загрузку, показываем результат
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('resultCard').style.display = 'block';
-                
-                let html = `<p>Твой IP: <b>${data.my_ip}</b></p>`;
-                html += `<p>Найдено устройств: <b>${data.devices.length}</b></p>`;
-                
-                if (data.devices.length === 0) {
-                    html += "<p style='color:#ffcc00'>В сети пока никого нет, кроме тебя.</p>";
-                } else {
-                    data.devices.forEach(dev => {
-                        html += `<div class="device-item">
-                            <b>IP:</b> ${dev.ip}<br>
-                            <b>MAC:</b> ${dev.mac}
-                        </div>`;
-                    });
-                }
-                
-                document.getElementById('result').innerHTML = html;
-
-            } catch (error) {
-                // Если ошибка (например, Termux закрылся)
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('resultCard').style.display = 'block';
-                document.getElementById('result').innerHTML = `
-                    <p class="error-text">Ошибка связи с сервером.</p>
-                    <p>Проверь, что Termux открыт, сервер запущен, и ссылка вставлена правильно.</p>
-                `;
-            }
-        }
-    </script>
 </body>
 </html>
